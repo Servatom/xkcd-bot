@@ -172,6 +172,17 @@ async def changePrefix(ctx):
 
     # Update prefix_data and reload cogs
     prefix_data[str(ctx.guild.id)] = new_prefix
+@bot.event
+async def on_guild_join(guild):
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+            embed = discord.Embed(
+                title="Setup Required",
+                description="Please run `" + prefix + "setup` to setup the bot",
+                color=discord.Color.red(),
+            )
+            await channel.send(embed=embed)
+        break
 
 def bot_init():
     for cog in cogs:
