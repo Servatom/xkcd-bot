@@ -114,10 +114,64 @@ async def setup(ctx):
     prefix_data[str(guild_id)] = client.prefix
     await channel.send("Setup complete")
 
+@bot.command(name="prefix")
+async def changePrefix(ctx):
+    """
+    Change the prefix of the bot
+    """
+    global prefix_data
+    global prefix
+    if str(ctx.guild.id) not in prefix_data:
+            embed = discord.Embed(
+                description="You are not registered, please run `" + prefix + "setup` first",
+                title="",
+                color=discord.Color.red(),
+            )
+            await ctx.send(embed=embed)
+            return
+    prefix = db.query(models.Clients).filter_by(guild_id=ctx.guild.id).first().prefix
+    embed = discord.Embed(
+        title="Enter the new prefix for your bot",
+        description="Current prefix is : " + prefix,
+    )
+    await ctx.send(embed=embed)
+    try:
+        msg = await bot.wait_for(
+            "message", check=lambda message: message.author == ctx.author, timeout=60
+        )
+    except asyncio.TimeoutError:
+        embed = discord.Embed(
+            title="Timed out",
+            description="You took too long to respond",
+            color=discord.Color.red(),
+        )
+        await ctx.send(embed=embed)
+        return
+    new_prefix = msg.content.strip()
+    db.query(models.Clients).filter_by(guild_id=ctx.guild.id).update(
+        {"prefix": new_prefix}
+    )
+    try:
+        db.commit()
+    except Exception as e:
+        print(e)
+        await ctx.send("Something went wrong, please try again!")
+        return
+    embed = discord.Embed(
+        title="Successfully updated prefix",
+        description="Prefix changed to " + new_prefix,
+        color=discord.Color.green(),
+    )
+    await ctx.send(embed=embed)
+
+    # Update prefix_data and reload cogs
+    prefix_data[str(ctx.guild.id)] = new_prefix
+
 def bot_init():
     for cog in cogs:
         bot.load_extension(cog)
     fillPrefix()
 
+bot_init()
 print(token)
 bot.run(token)
