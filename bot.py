@@ -1,6 +1,4 @@
 import asyncio
-import imp
-from sys import prefix
 import discord
 from discord.ext import commands
 import os
@@ -61,7 +59,7 @@ async def setup(ctx):
     # embed
     embed = discord.Embed(title="Setup", description="Please select a channel to send messages to", color=0x00ff00)
     count = 1
-    for channel in channels:
+    for channel in list_of_channels:
         embed.add_field(name= str(count) +". " + channel.name, value=channel.id, inline=False)
         count = count + 1
     # send embed
@@ -84,9 +82,12 @@ async def setup(ctx):
         return
     
     # check if response is valid
+    channel_id = 0
+    print(len(list_of_channels))
     try:
         channel_id = int(msg.content)
     except:
+        print("here")
         embed = discord.Embed(
             title="Invalid response",
             description=f"{msg.content} is not a valid response",
@@ -96,23 +97,27 @@ async def setup(ctx):
         return
     
     # check if channel is valid
-    try:
-        channel = list_of_channels[channel_id - 1]
-    except:
-        embed = discord.Embed(
-            title="Invalid response",
-            description=f"{msg.content} is not a valid response",
-            color=discord.Color.red(),
-        )
-        await ctx.send("You have not responded with a valid response so quitting!")
-        return
+    channel = list_of_channels[channel_id - 1]
     
-    # create new client
-    client = models.Clients(guild_id, channel.id, prefix)
-    db.add(client)
-    db.commit()
-
-    prefix_data[str(guild_id)] = client.prefix
+    # check if guild id is already in database
+    guild = db.query(models.Clients).filter(models.Clients.guild_id == guild_id).first()
+    if guild:
+        # update db
+        guild.channel = channel.id
+        db.commit()
+        # send message
+        embed = discord.Embed(
+            title="Updated",
+            description=f"Updated channel to {channel.name}",
+            color=discord.Color.green(),
+        )
+        await ctx.send(embed=embed)
+    else:
+        # create new client
+        client = models.Clients(guild_id, channel.id, prefix)
+        db.add(client)
+        db.commit()
+        prefix_data[str(guild_id)] = client.prefix
     await channel.send("Setup complete")
 
 @bot.command(name="prefix")
@@ -175,7 +180,4 @@ def bot_init():
 
 bot_init()
 print(token)
-bot.run(token)
-
-
-    
+bot.run(token)    
