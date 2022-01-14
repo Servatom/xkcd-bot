@@ -34,14 +34,9 @@ class Help(commands.Cog):
         
         
         prefix = client.prefix
-        
-       
-            
         commands = {f"```{prefix}random```": "Displays a random xkcd comic",
                     f"```{prefix}setup ```": "To update the channel in which bot sends message",
                     f"```{prefix}prefix```": "Change the prefix of the bot"}
-
-
         embed = discord.Embed(title="List of commands:", description="These are the commands to use with this bot", color=discord.Color.green())
         count = 1
         for command in commands:
