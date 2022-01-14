@@ -15,8 +15,9 @@ class Periodic(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
         self.last_sent = ''
+        task = self.sendComic.start()
     @tasks.loop(hours=12)
-    async def send(self):
+    async def sendComic(self):
         day = datetime.datetime.today().strftime("%A")
         current_date = datetime.datetime.today().strftime("%d/%m/%Y")
         if(day == 'Tuesday' or day == 'Thursday' or day == 'Saturday' and self.last_sent!=current_date):
@@ -27,20 +28,16 @@ class Periodic(commands.Cog):
             embed.set_image(url=response.json()["img"])
             clients = db.query(models.Clients).all()
             for client in clients:
-                guild = self.bot.get_guild(client.guild_id)
-                channel = None
+                # get guild from guild id
+                print(client.guild_id)
+                guild = await self.bot.fetch_guild(client.guild_id)
+                # send message to channel id
                 try:
-                    channel = guild.get_channel(client.channel)
-                except:
-                    for channels in guild.text_channels:
-                        if channels.permissions_for(guild.me).send_messages:
-                            channel = channels
-                            break
-                if channel.permissions_for(guild.me).send_messages:
+                    # send to channel
+                    channel = await self.bot.fetch_channel(client.channel)
                     await channel.send(embed=embed)
-                else:
-                    pass
-                    
+                except:
+                    print("Couldn't send to channel")
 
 def setup(bot):
     bot.add_cog(Periodic(bot))
