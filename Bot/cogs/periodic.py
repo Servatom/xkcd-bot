@@ -1,5 +1,3 @@
-from http import client
-import imp
 import os
 import discord
 from discord.ext import commands , tasks
