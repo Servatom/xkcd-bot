@@ -1,4 +1,5 @@
 import asyncio
+import imp
 from sys import prefix
 import discord
 from discord.ext import commands
@@ -43,7 +44,7 @@ bot = commands.Bot(command_prefix=(get_prefix))
 db = SessionLocal()
 models.Base.metadata.create_all(bind=engine)
 
-cogs = ['cogs.random']
+cogs = ['cogs.random','cogs.periodic']
 
 @bot.command("setup")
 async def setup(ctx):
@@ -107,7 +108,7 @@ async def setup(ctx):
         return
     
     # create new client
-    client = models.Clients(guild_id, channel.name, prefix)
+    client = models.Clients(guild_id, channel.id, prefix)
     db.add(client)
     db.commit()
 
@@ -175,3 +176,6 @@ def bot_init():
 bot_init()
 print(token)
 bot.run(token)
+
+
+    
