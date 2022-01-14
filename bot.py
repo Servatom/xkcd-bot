@@ -37,12 +37,12 @@ def get_prefix(client, message):
         prefix_guild = prefix
     return prefix_guild
     
-bot = commands.Bot(command_prefix=(get_prefix))
+bot = commands.Bot(command_prefix=(get_prefix), help_command=None)
 
 db = SessionLocal()
 models.Base.metadata.create_all(bind=engine)
 
-cogs = ['cogs.random','cogs.periodic']
+cogs = ['cogs.random','cogs.periodic', 'cogs.help']
 
 @bot.command("setup")
 async def setup(ctx):
