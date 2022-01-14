@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  xkcdbot:
+    image: xkcdbot
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./database:/Bot/database
+    environment:
+      - TOKEN=<DISCORD_BOT>
+      - PREFIX=~
+    restart: always
