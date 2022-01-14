@@ -14,7 +14,7 @@ class Clients(Base):
     id = Column(Integer, primary_key=True, index=True)
     guild_id = Column(Integer, index=True, nullable=False)
     prefix = Column(String, default=PREFIX)
-    channel = Column(String, index=True, nullable=False)
+    channel = Column(Integer, index=True, nullable=False)
 
     def __init__(self, guild_id, channel, prefix=PREFIX):
         self.guild_id = guild_id

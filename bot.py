@@ -99,12 +99,25 @@ async def setup(ctx):
     # check if channel is valid
     channel = list_of_channels[channel_id - 1]
     
-    # create new client
-    client = models.Clients(guild_id, channel.id, prefix)
-    db.add(client)
-    db.commit()
-
-    prefix_data[str(guild_id)] = client.prefix
+    # check if guild id is already in database
+    guild = db.query(models.Clients).filter(models.Clients.guild_id == guild_id).first()
+    if guild:
+        # update db
+        guild.channel = channel.id
+        db.commit()
+        # send message
+        embed = discord.Embed(
+            title="Updated",
+            description=f"Updated channel to {channel.name}",
+            color=discord.Color.green(),
+        )
+        await ctx.send(embed=embed)
+    else:
+        # create new client
+        client = models.Clients(guild_id, channel.id, prefix)
+        db.add(client)
+        db.commit()
+        prefix_data[str(guild_id)] = client.prefix
     await channel.send("Setup complete")
 
 @bot.command(name="prefix")
