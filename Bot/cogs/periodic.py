@@ -14,7 +14,7 @@ class Periodic(commands.Cog):
         self.bot = bot
         self.last_sent = ''
         task = self.sendComic.start()
-    @tasks.loop(hours=12)
+    @tasks.loop(hours=6)
     async def sendComic(self):
         day = datetime.datetime.today().strftime("%A")
         current_date = datetime.datetime.today().strftime("%d/%m/%Y")
