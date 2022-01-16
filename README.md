@@ -1,5 +1,6 @@
 # xkcd-bot
-<br>
+
+[![Build Status](https://travis-ci.com/Servatom/xkcd-bot.svg?branch=main)](https://travis-ci.com/Servatom/xkcd-bot)[![Visits Badge](https://badges.pufler.dev/visits/Servatom/xkcd-bot)](https://github.com/Servatom/xkcd-bot/)<br>
 <p align="center">
 <img src="https://assets.servatom.com/xkcd-bot/banner3.png" height="200px">
 <h3 align="center"> A bot to view xkcd comics directly from discord and get updates of the comics automatically. </h3>
