@@ -19,7 +19,7 @@ try :
     token = os.environ['TOKEN']
 except :
     print('TOKEN not found')
-    exit(1)
+    exit()
 
 prefix = ""
 try:
@@ -191,4 +191,8 @@ def bot_init():
 
 bot_init()
 print(token)
-bot.run(token)    
+try:
+    bot.run(token)    
+except:
+    print("Token is invalid")
+    exit()
